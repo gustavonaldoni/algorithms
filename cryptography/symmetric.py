@@ -69,18 +69,67 @@ class SymmetricCryptography:
                 result += character
             else:
                 position_on_key = key.find(character)
-                cipher_character = alphabet[position_on_key]
+                decipher_character = alphabet[position_on_key]
 
+                result += decipher_character
+
+        return result
+    
+    def vigenere_cipher(self, text: str, key: str, alphabet: str = ENGLISH_ALPHABET_UPPER) -> str:
+        result = ""
+        
+        alphabet_length = len(alphabet)
+        key_length = len(key)
+        
+        index = 0
+        
+        for character in text:
+            if character in CHARACTERS_TO_IGNORE:
+                result += character
+            else:
+                character_position_on_alphabet = alphabet.find(character)
+                key_position_on_alphabet = alphabet.find(key[index % key_length])
+                
+                decipher_character = alphabet[(character_position_on_alphabet + key_position_on_alphabet) % alphabet_length]
+                
+                result += decipher_character
+                
+                index += 1
+        
+        return result
+    
+    def vigenere_decipher(self, text: str, key: str, alphabet: str = ENGLISH_ALPHABET_UPPER) -> str:
+        result = ""
+        
+        alphabet_length = len(alphabet)
+        key_length = len(key)
+        
+        index = 0
+        
+        for character in text:
+            if character in CHARACTERS_TO_IGNORE:
+                result += character
+            else:
+                character_position_on_alphabet = alphabet.find(character)
+                key_position_on_alphabet = alphabet.find(key[index % key_length])
+                
+                cipher_character = alphabet[(character_position_on_alphabet - key_position_on_alphabet) % alphabet_length]
+                
                 result += cipher_character
-
+                
+                index += 1
+        
         return result
 
 
 if __name__ == "__main__":
     sc = SymmetricCryptography()
 
-    print(sc.ceaser_cipher("ABCZ", 2))
-    print(sc.ceaser_cipher("CDEB", -2))
+    print(sc.ceaser_cipher(text="ABCZ", key=2))
+    print(sc.ceaser_decipher(text="CDEB", key=2))
     
-    print(sc.monoalphabetic_cipher("MEET ME LATER", "DKVQFIBJWPESCXHTMYAUOLRGZN"))
-    print(sc.monoalphabetic_decipher("CFFU CF SDUFY", "DKVQFIBJWPESCXHTMYAUOLRGZN"))
+    print(sc.monoalphabetic_cipher(text="MEET ME LATER", key="DKVQFIBJWPESCXHTMYAUOLRGZN"))
+    print(sc.monoalphabetic_decipher(text="CFFU CF SDUFY", key="DKVQFIBJWPESCXHTMYAUOLRGZN"))
+
+    print(sc.vigenere_cipher(text="MEET ME LATER", key="LEMON"))
+    print(sc.vigenere_decipher(text="XIQH ZP PMHRC", key="LEMON"))
