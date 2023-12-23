@@ -90,9 +90,9 @@ class SymmetricCryptography:
                 character_position_on_alphabet = alphabet.find(character)
                 key_position_on_alphabet = alphabet.find(key[index % key_length])
                 
-                decipher_character = alphabet[(character_position_on_alphabet + key_position_on_alphabet) % alphabet_length]
+                cipher_character = alphabet[(character_position_on_alphabet + key_position_on_alphabet) % alphabet_length]
                 
-                result += decipher_character
+                result += cipher_character
                 
                 index += 1
         
@@ -113,9 +113,9 @@ class SymmetricCryptography:
                 character_position_on_alphabet = alphabet.find(character)
                 key_position_on_alphabet = alphabet.find(key[index % key_length])
                 
-                cipher_character = alphabet[(character_position_on_alphabet - key_position_on_alphabet) % alphabet_length]
+                decipher_character = alphabet[(character_position_on_alphabet - key_position_on_alphabet) % alphabet_length]
                 
-                result += cipher_character
+                result += decipher_character
                 
                 index += 1
         
