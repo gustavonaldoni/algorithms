@@ -3,6 +3,8 @@ import string
 ENGLISH_ALPHABET_UPPER = string.ascii_uppercase
 ENGLISH_ALPHABET_LOWER = string.ascii_lowercase
 
+CHARACTERS_TO_IGNORE = (" ", "\n", "\t")
+
 
 def ceaser_cipher(text: str, key: int, alphabet: str = ENGLISH_ALPHABET_UPPER) -> str:
     result = ""
@@ -12,7 +14,7 @@ def ceaser_cipher(text: str, key: int, alphabet: str = ENGLISH_ALPHABET_UPPER) -
         key = key % alphabet_length
 
     for character in text:
-        if character in (" ", "\n", "\t"):
+        if character in CHARACTERS_TO_IGNORE:
             result += character
             continue
 
