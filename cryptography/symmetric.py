@@ -8,7 +8,7 @@ CHARACTERS_TO_IGNORE = (" ", "\n", "\t")
 
 class SymmetricCryptography:
     def ceaser_cipher(
-        self, text: str, key: int, alphabet: str = ENGLISH_ALPHABET_UPPER
+        self, plaintext: str, key: int, alphabet: str = ENGLISH_ALPHABET_UPPER
     ) -> str:
         result = ""
         alphabet_length = len(alphabet)
@@ -16,7 +16,7 @@ class SymmetricCryptography:
         if key > alphabet_length:
             key = key % alphabet_length
 
-        for character in text:
+        for character in plaintext:
             if character in CHARACTERS_TO_IGNORE:
                 result += character
                 continue
@@ -39,16 +39,16 @@ class SymmetricCryptography:
         return result
 
     def ceaser_decipher(
-        self, text: str, key: int, alphabet: str = ENGLISH_ALPHABET_UPPER
+        self, ciphertext: str, key: int, alphabet: str = ENGLISH_ALPHABET_UPPER
     ) -> str:
-        return self.ceaser_cipher(text, (-1) * key, alphabet)
+        return self.ceaser_cipher(ciphertext, (-1) * key, alphabet)
 
     def monoalphabetic_cipher(
-        self, text: str, key: str, alphabet: str = ENGLISH_ALPHABET_UPPER
+        self, plaintext: str, key: str, alphabet: str = ENGLISH_ALPHABET_UPPER
     ) -> str:
         result = ""
 
-        for character in text:
+        for character in plaintext:
             if character in CHARACTERS_TO_IGNORE:
                 result += character
             else:
@@ -60,11 +60,11 @@ class SymmetricCryptography:
         return result
 
     def monoalphabetic_decipher(
-        self, text: str, key: str, alphabet: str = ENGLISH_ALPHABET_UPPER
+        self, ciphertext: str, key: str, alphabet: str = ENGLISH_ALPHABET_UPPER
     ) -> str:
         result = ""
 
-        for character in text:
+        for character in ciphertext:
             if character in CHARACTERS_TO_IGNORE:
                 result += character
             else:
@@ -75,7 +75,7 @@ class SymmetricCryptography:
 
         return result
     
-    def vigenere_cipher(self, text: str, key: str, alphabet: str = ENGLISH_ALPHABET_UPPER) -> str:
+    def vigenere_cipher(self, plaintext: str, key: str, alphabet: str = ENGLISH_ALPHABET_UPPER) -> str:
         result = ""
         
         alphabet_length = len(alphabet)
@@ -83,7 +83,7 @@ class SymmetricCryptography:
         
         index = 0
         
-        for character in text:
+        for character in plaintext:
             if character in CHARACTERS_TO_IGNORE:
                 result += character
             else:
@@ -98,7 +98,7 @@ class SymmetricCryptography:
         
         return result
     
-    def vigenere_decipher(self, text: str, key: str, alphabet: str = ENGLISH_ALPHABET_UPPER) -> str:
+    def vigenere_decipher(self, ciphertext: str, key: str, alphabet: str = ENGLISH_ALPHABET_UPPER) -> str:
         result = ""
         
         alphabet_length = len(alphabet)
@@ -106,7 +106,7 @@ class SymmetricCryptography:
         
         index = 0
         
-        for character in text:
+        for character in ciphertext:
             if character in CHARACTERS_TO_IGNORE:
                 result += character
             else:
@@ -120,16 +120,72 @@ class SymmetricCryptography:
                 index += 1
         
         return result
+    
+    def _clean_plaintext(self, plaintext: str) -> str:
+        """Remove all characters that needs to be ignored on the plaintext. 
+           These characters are defined on CHARACTERS_TO_IGNORE constant.
+
+        Args:
+            plaintext (str): the plaintext to remove the characters from.
+
+        Returns:
+            str: the plaintext with all characters to ignore removed.
+        """
+
+        for character_to_ignore in CHARACTERS_TO_IGNORE:
+            plaintext = plaintext.replace(character_to_ignore, "")
+            
+        return plaintext
+    
+    def get_column_from_text(self, text: str, number_of_rows: int, number_of_columns: int, column: int) -> str:
+        result = ""
+        
+        for i in range(number_of_rows):
+            result += text[i * number_of_columns + column]
+            
+        return result
+    
+    def permutation_cipher(self, plaintext: str, key: list[int], fill_character: str = " ") -> str:
+        ciphertext = ""
+        
+        clean_plaintext = self._clean_plaintext(plaintext)
+        clean_plaintext_length = len(clean_plaintext)
+        
+        number_of_columns = len(key)
+        
+        # Filling the clean_plaintext to form a complete matrix
+        remainder = clean_plaintext_length % number_of_columns
+        
+        if remainder != 0:
+            clean_plaintext += fill_character * (number_of_columns - remainder)
+            clean_plaintext_length = len(clean_plaintext)
+        
+        number_of_rows = clean_plaintext_length // number_of_columns
+        
+        # Completing the ciphertext on the correct order
+        key_map = {key[column]: column for column in range(number_of_columns)}
+        
+        for column in range(number_of_columns):
+            ciphertext += self.get_column_from_text(clean_plaintext, number_of_rows, number_of_columns, key_map[column])
+        
+        ciphertext = ciphertext.replace(fill_character, "")
+        
+        return ciphertext
+
+    def permutation_decipher(self, ciphertext: str, key: list[int]) -> str:
+        pass
 
 
 if __name__ == "__main__":
     sc = SymmetricCryptography()
-
-    print(sc.ceaser_cipher(text="ABCZ", key=2))
-    print(sc.ceaser_decipher(text="CDEB", key=2))
     
-    print(sc.monoalphabetic_cipher(text="MEET ME LATER", key="DKVQFIBJWPESCXHTMYAUOLRGZN"))
-    print(sc.monoalphabetic_decipher(text="CFFU CF SDUFY", key="DKVQFIBJWPESCXHTMYAUOLRGZN"))
+    print(sc.ceaser_cipher(plaintext="ABCZ", key=2))
+    print(sc.ceaser_decipher(ciphertext="CDEB", key=2))
+    
+    print(sc.monoalphabetic_cipher(plaintext="MEET ME LATER", key="DKVQFIBJWPESCXHTMYAUOLRGZN"))
+    print(sc.monoalphabetic_decipher(ciphertext="CFFU CF SDUFY", key="DKVQFIBJWPESCXHTMYAUOLRGZN"))
 
-    print(sc.vigenere_cipher(text="MEET ME LATER", key="LEMON"))
-    print(sc.vigenere_decipher(text="XIQH ZP PMHRC", key="LEMON"))
+    print(sc.vigenere_cipher(plaintext="MEET ME LATER", key="LEMON"))
+    print(sc.vigenere_decipher(ciphertext="XIQH ZP PMHRC", key="LEMON"))
+    
+    print(sc.permutation_cipher(plaintext="MEET ME LATER", key=[3, 2, 0, 1]))
